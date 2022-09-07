@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import ConfirmationService from 'primevue/confirmationservice';
 import PrimeVue from 'primevue/config'
 import Ripple from 'primevue/ripple';
 
@@ -19,6 +20,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(PrimeVue, { ripple: true })
+            .use(ConfirmationService)
             .directive('ripple', Ripple)
             .mount(el);
     },

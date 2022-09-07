@@ -6,9 +6,13 @@ import Button from 'primevue/button';
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
 
+defineProps({
+  status: String,
+})
 let form = useForm({
-  username: '',
+  email: '',
   password: '',
+  remember: false,
 })
 
 const submit = ()=>{
@@ -33,15 +37,15 @@ const submit = ()=>{
                     </div>
 
                     <div class="w-full md:w-10 mx-auto">
-                        <label for="username" class="block text-900 text-xl font-medium mb-2">Username</label>
-                        <InputText id="username" v-model="form.username" type="text" class="w-full mb-3" placeholder="Email" style="padding:1rem;" />
+                        <label for="username" class="block text-900 text-xl font-medium mb-2">Email</label>
+                        <InputText id="username" v-model="form.email" type="text" class="w-full mb-3" placeholder="Email" style="padding:1rem;" />
 
                         <label for="password1" class="block text-900 font-medium text-xl mb-2">Senha</label>
-                        <Password id="password1" v-model="form.password" placeholder="Password" :toggleMask="true" class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"></Password>
+                        <InputText id="password1" type="password" v-model="form.password" placeholder="Password" :toggleMask="true" class="w-full mb-3" style="padding:1rem"></InputText>
 
                         <div class="flex align-items-center justify-content-between mb-5">
                             <div class="flex align-items-center">
-                                <Checkbox id="rememberme1" v-model="checked" :binary="true" class="mr-2"></Checkbox>
+                                <Checkbox id="rememberme1" v-model="form.remember" :binary="true" class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
                             </div>
                             <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
