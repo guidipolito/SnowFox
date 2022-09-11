@@ -24,6 +24,7 @@ import AppMenu from '../Components/AppMenu.vue';
 import AppFooter from '../Components/AppFooter.vue';
 
 export default {
+    name: 'AppLayout',
     emits: ['change-theme'],
     data(){
         return {
@@ -35,14 +36,15 @@ export default {
                 {
                     label: 'Home',
                     items: [
-                        { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
+                        { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/admin/dashboard' },
+                        { label: 'Users', icon: 'pi pi-fw pi-user-edit', to: route('users.index') },
                     ],
                 },
                 {
                   label: 'Content', icon: 'pi pi-fw pi-sitemap',
                   items: [
-                    {label: 'Posts', icon: 'pi pi-fw pi-id-card', to: '/formlayout'},
-                    {label: 'Criar Post', icon: 'pi pi-fw pi-check-square', to: '/input'},
+                    {label: 'Posts', icon: 'pi pi-fw pi-id-card', to: route('posts.index')},
+                    {label: 'Criar Post', icon: 'pi pi-fw pi-check-square', to: route('posts.create')},
                     {label: 'Categorias', icon: 'pi pi-fw pi-mobile', to: '/button'},
                   ],
                 },

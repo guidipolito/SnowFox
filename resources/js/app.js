@@ -9,6 +9,9 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import ConfirmationService from 'primevue/confirmationservice';
 import PrimeVue from 'primevue/config'
 import Ripple from 'primevue/ripple';
+import Tooltip from 'primevue/tooltip';
+
+app
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -22,6 +25,7 @@ createInertiaApp({
             .use(PrimeVue, { ripple: true })
             .use(ConfirmationService)
             .directive('ripple', Ripple)
+            .directive('tooltip', Tooltip)
             .mount(el);
     },
 });

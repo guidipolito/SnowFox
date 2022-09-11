@@ -1,7 +1,10 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/inertia-vue3';
+<script>
 import AppLayout from '@/Layouts/AppLayout.vue';
+
+export default{
+    layout: AppLayout, 
+}
+
 </script>
 
 <template>
