@@ -45,7 +45,7 @@ export default {
                   items: [
                     {label: 'Posts', icon: 'pi pi-fw pi-id-card', to: route('posts.index')},
                     {label: 'Criar Post', icon: 'pi pi-fw pi-check-square', to: route('posts.create')},
-                    {label: 'Categorias', icon: 'pi pi-fw pi-mobile', to: '/button'},
+                    {label: 'Categorias', icon: 'pi pi-fw pi-mobile', to: route('category.index')},
                   ],
                 },
                 {

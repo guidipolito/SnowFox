@@ -11,7 +11,6 @@ import PrimeVue from 'primevue/config'
 import Ripple from 'primevue/ripple';
 import Tooltip from 'primevue/tooltip';
 
-app
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -30,4 +29,9 @@ createInertiaApp({
     },
 });
 
-InertiaProgress.init({ color: '#4B5563' });
+InertiaProgress.init({ 
+    color: '#FFF', 
+    includeCSS: true,
+    showSpinner: true, 
+    delay: 15,
+});

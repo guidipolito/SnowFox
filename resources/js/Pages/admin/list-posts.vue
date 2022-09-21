@@ -1,12 +1,13 @@
 <template>
     <div class="card">
-        <DataTable :value="posts" class="p-datatable-lg" :scrollable="true" >
+        <DataTable :value="posts.data" class="p-datatable-lg" :scrollable="true" >
             <template #header>
                 Posts
             </template>
             <Column field="id" header="ID"></Column>
             <Column field="title" header="Title"></Column>
             <Column field="slug" header="Slug"></Column>
+            <Column field="status" header="Status"></Column>
             <Column header="Ações">
                 <template #body="{data}">
                     <Link :href="route('posts.edit', data.id)">

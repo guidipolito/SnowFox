@@ -27,7 +27,7 @@
 
             <label for="email" class="block text-900 text-sm font-medium mb-2">Email</label>
             <InputText id="email" class="w-full" v-model="editing.email" />
-            <small class="p-error" v-if="errors.name">{{ errors.name }}</small>
+            <small class="p-error" v-if="errors.name">{{ errors.email }}</small>
 
             <Button class="block mt-3" type="submit" label="Salvar" />
         </form>

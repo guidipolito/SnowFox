@@ -1,6 +1,7 @@
 <template>
     <div class="card">
         <form @submit.prevent="submit">
+            <h2>{{ typeof this.post == 'undefined' ? 'Criar Post' : 'Editar Post' }}</h2>
             <div class="mb-3">
                 <label class="">Title</label>
                 <InputText v-model="form.title" class="w-full" />
@@ -20,7 +21,7 @@
             </div>
             <div>
                 <label class="">Content</label>
-                <Editor v-model="form.content" editorStyle="height: 320px"/>
+                <Editor v-model="form.content" editorStyle="height: 320px" modules=""/>
                 <small class="p-error" v-if="errors.title">{{ errors.content }}</small>
             </div>
             <Button type="submit" class="mt-3" label="Salvar" />
@@ -42,14 +43,24 @@ export default {
         post: Object,
         errors: Object,
     },
+    methods: {
+        slugFilter(str){
+            return str.toLowerCase().replace(/ /g, '-').replace(/[^(a-z0-9\-)]/g, '')
+        }
+    },
+    watch:{
+        'form.title'(value, oldValue){
+            if( this.form.slug == '' || this.slugFilter(oldValue) == this.form.slug ) this.form.slug = this.slugFilter(value)
+        }
+    },
     components:{
         InputText, Editor, Dropdown, Button
     },
-    setup(){
+    data(){
         let form, submit
-
-        if(typeof post != 'undefined'){
-            form = useForm(post)
+        
+        if(typeof this.post != 'undefined'){
+            form = useForm(this.post)
             submit = () => form.post( route('posts.update', post.id) )
         }else{
             form = useForm({
@@ -69,7 +80,10 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
+.ql-tooltip ql-editing{
+    z-index: 999;
+}
 .p-editor-content p{
     font-size: 1.3rem;
 }

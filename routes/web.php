@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -28,11 +29,17 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth', 'verified'])->prefix('/admin')->group(function(){
+
     Route::resource('users', UserController::class);
+
     Route::resource('posts', PostController::class);
-    Route::get('dashboard', function () {
+
+    Route::resource('category', CategoryController::class)->only(['index', 'store', 'update']);
+
+    Route::get('/', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
 });
 
 require __DIR__.'/auth.php';

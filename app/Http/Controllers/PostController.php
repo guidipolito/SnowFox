@@ -2,22 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostFilter;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PostController extends Controller
 {
+    protected function getPosts(Request $query){
+        $filter = $query->validate([
+            'search'=> 'string',
+            'order'=>   Rule::in(['ASC', 'DESC']),
+            'orderBy'=> Rule::in(['id', 'title', 'slug']),
+            'perPage' => 'numeric',
+        ]);
+        $posts = Post::query();
+        foreach($filter as $key=>$value){
+            switch($key){
+            case 'orderBy': 
+                $posts->orderBy($value, $filter['order'] ?? 'DESC');
+            break;
+            case 'search':
+                $posts->where(function(Builder $query) use ($value){
+                    $query->where('title', 'like', '%'.$value.'%')->orWhere('slug', 'like', '%'.mb_strtolower($value).'%');
+                });
+            break;
+            }
+        }
+        if(!empty($filter['perPage'])){
+            return $posts->paginate($filter['perPage']);
+        }
+        return $posts->paginate(12);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $query)
     {
-        return Inertia::render('admin/list-posts', ['posts'=>Post::all()] );
+        return Inertia::render('admin/list-posts', ['posts'=>$this->getPosts($query)] );
     }
 
     /**
@@ -63,7 +91,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return Inertia::render('admin/post-form', ['post' =>$post]);
+        return Inertia::render('admin/post-form', [ 'post' =>$post ]);
     }
 
     /**
