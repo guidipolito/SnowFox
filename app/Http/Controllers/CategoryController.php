@@ -11,8 +11,9 @@ class CategoryController extends Controller
 {
     public function index(){
         
+        
         return Inertia::render('admin/list-category', [
-            'categories' => fn() => Category::all(),
+            'categories' => fn() => Category::tree()->get()->toTree(),
         ]);
     }
 
@@ -20,6 +21,7 @@ class CategoryController extends Controller
         $validation = [
             'name'=>'required|string',
             'description'=> 'string|nullable',
+            'parent_id' => 'nullable|numeric'
         ];
 
         //If it's an update there is no way that the slug is not going to be in the database

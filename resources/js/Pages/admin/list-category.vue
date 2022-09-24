@@ -1,30 +1,27 @@
 <template>
     <div class="card">
 
-        <Toolbar>
-            <template #end>
-                <Button icon="pi pi-plus-circle" @click="createCategory" v-tooltip=" 'New' " />
-            </template>
-        </Toolbar>
-
         <template v-if="message">
             <Message severity="success" class="opacity-80">{{ message }}</Message>
         </template>
 
         <template v-if="categories.length">
-            <DataTable :value="categories" class="p-datatable-lg" :scrollable="true" >
+            <TreeTable :value="tree" class="p-datatable-lg" :scrollable="true" >
                 <template #header>
-                    Categorias
+                    <div class="flex align-items-center">
+                        <span>Categorias</span>
+                        <Button icon="pi pi-plus-circle" class="ml-auto" @click="createCategory" v-tooltip=" 'New' " />
+                    </div>
                 </template>
-                <Column field="id" header="ID"></Column>
-                <Column field="name" header="Nome"></Column>
-                <Column field="slug" class="break-words" header="Slug"></Column>
-                <Column header="Ações">
-                    <template #body="{data}">
-                        <Button icon="pi pi-pencil" @click="editCategory(data)" v-tooltip="'Editar'"></Button>
+                <Column field="id" header="ID" :expander="true" />
+                <Column field="name" header="Name" />
+                <Column field="slug" class="break-words" header="Slug" />
+                <Column header="Actions">
+                    <template #body="data">
+                        <Button icon="pi pi-pencil" @click="editCategory(data)" v-tooltip="'Edit'"></Button>
                     </template>
                 </Column>
-            </DataTable>
+            </TreeTable>
         </template>
         <h2 v-else> <center> Sem categorias cadastradas </center> </h2>
 
@@ -46,6 +43,11 @@
                 <TextArea id="description" class="w-full" v-model="form.description" placeholder="Say a few words about this category" />
                 <small class="p-error" v-if="errors.description">{{ errors.description }}</small>
 
+                <label for="parent_id" class="block text-900 text-sm font-medium mb-2 mt-3">Parent Category</label>
+            
+                <small class="p-error" v-if="errors.description">{{ errors.description }}</small>
+                <Dropdown class="w-full" :options="categories" optionLabel="name" optionValue="id" v-model="form.parent_id" />
+
                 <Button class="block mt-3" type="submit" label="Salvar" />
             </form>
         </Dialog>
@@ -56,7 +58,7 @@
 <script>
 import { useForm } from '@inertiajs/inertia-vue3';
 import AppLayout from '../../Layouts/AppLayout.vue';
-import DataTable from 'primevue/datatable';
+import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
@@ -64,6 +66,7 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Toolbar from 'primevue/toolbar';
 import TextArea from 'primevue/textarea';
+import Dropdown from 'primevue/dropdown';
 import { Inertia } from '@inertiajs/inertia';
 
 export default {
@@ -72,6 +75,7 @@ export default {
             name: '',
             slug: '',
             description: '',
+            parent_id: null,
         })
         let form = formBase()
 
@@ -91,6 +95,7 @@ export default {
                     onSuccess: ()=>{
                         this.formVisible = false
                         this.message = 'Post #'+this.form.id+' Updated'
+                        Inertia.reload({only: ['categories']})
                     }
                 });
             }
@@ -99,17 +104,32 @@ export default {
         const createCategory = () => {
             this.formVisible = true
             this.form = formBase();
-            }
+        }
         const editCategory = data => {
             this.formVisible = true
-            this.form = useForm(data)
+            this.form = useForm(data.node.data)
         }
+        const getTree = () => { 
+            const mapNodes = obj => {
+                let children = []
+                if(obj.children.length > 0){
+                    children = obj.children.filter(item=>typeof item != 'undefined').map(data=>mapNodes(data))
+                }
+                return { key: obj.path.replace('.', '-'), data: obj, children }
+            }
+            return this.categories.filter(item=>{console.log(item); return true}).map(obj=>mapNodes(obj));
+        }
+
+        let tree = getTree()
+        this.$watch('categories', ()=>this.tree = getTree() )
+
         return { 
             submit, form, 
             formVisible: false,
             createCategory, 
             editCategory,
             message: '',
+            tree,
         }
     },
     props: {
@@ -118,7 +138,7 @@ export default {
     },
     layout: AppLayout,
     components: {
-        Dialog, InputText, Button, Message, Toolbar, DataTable, Column, TextArea
+        Dialog, InputText, Button, Message, Toolbar, TreeTable, Column, TextArea, Dropdown
     },
 }
 

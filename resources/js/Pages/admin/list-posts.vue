@@ -2,7 +2,12 @@
     <div class="card">
         <DataTable :value="posts.data" class="p-datatable-lg" :scrollable="true" >
             <template #header>
-                Posts
+                <div class="flex align-items-center">
+                    <span>Posts</span>
+                    <Link :href="route('posts.create')" class="ml-auto">
+                        <Button icon="pi pi-plus-circle" v-tooltip=" 'New' " />
+                    </Link>
+                </div>
             </template>
             <Column field="id" header="ID"></Column>
             <Column field="title" header="Title"></Column>
@@ -25,7 +30,7 @@ import AppLayout from '../../Layouts/AppLayout.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Row from 'primevue/row';
-import { Link, useForm, usePage } from '@inertiajs/inertia-vue3';
+import { Link } from '@inertiajs/inertia-vue3';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
