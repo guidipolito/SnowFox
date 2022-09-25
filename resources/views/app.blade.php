@@ -12,6 +12,25 @@
         <!-- Scripts -->
         @routes
         @vite('resources/js/app.js')
+        <script>
+            let darkUrl = "{{asset('css/theme-dark.css')}}"
+            let lightUrl = "{{asset('css/theme-light.css')}}"
+            const setTheme = () => {
+                let themeDark = localStorage.getItem('theme-dark')
+                document.write(`<link id='theme-css' rel="stylesheet" href="${ themeDark ? darkUrl : lightUrl }">`)
+            }
+            setTheme()
+            window.toggleTheme = (themeDark = !localStorage.getItem('theme-dark') ) => {
+                let link = document.getElementById('theme-css')
+                if(themeDark){
+                    localStorage.removeItem('theme-dark')
+                    link.href=darkUrl
+                }else{
+                    localStorage.setItem('theme-dark', 1)
+                    link.href=lightUrl
+                }
+            }
+        </script>
         @inertiaHead
     </head>
     <body class="font-sans antialiased">

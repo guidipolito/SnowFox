@@ -17,6 +17,9 @@ import ConfirmPopup from 'primevue/confirmpopup';
             <i class="pi pi-ellipsis-v"></i>
         </button>
         <ul class="layout-topbar-menu hidden lg:flex origin-top">
+            <li class="flex align-items-center">
+                <InputSwitch v-model="darkMode" />
+            </li>
             <li>
             <button class="p-link layout-topbar-button">
                 <i class="pi pi-calendar"></i>
@@ -47,7 +50,16 @@ import ConfirmPopup from 'primevue/confirmpopup';
 </template>
 
 <script>
+import InputSwitch from 'primevue/inputswitch'
 export default {
+    data(){
+        let darkMode = localStorage.getItem('theme-dark') ? true : false
+        console.log(darkMode)
+        return { darkMode }
+    },
+    watch: {
+        darkMode: value => {window.toggleTheme(value)}
+    },
     methods: {
         onLogout(){
             this.$confirm.require({
@@ -68,5 +80,6 @@ export default {
               this.$emit('topbar-menu-toggle', event);
         },
     },
+    components: { InputSwitch }
 }
 </script>
