@@ -38,8 +38,7 @@ class CategoryController extends Controller
         $data = $this->categoryValidate($request);
         $category = new Category;
         $category->fill($data);
-        if($category->save()) return response()->json(['category' => $category]);
-        return response()->json([ 'error' => 'Something Bad happened'])->status(500);
+        if($category->save()) return Redirect::route('category.index');
     }
 
     public function update(Category $category, Request $request){

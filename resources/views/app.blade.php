@@ -23,10 +23,10 @@
             window.toggleTheme = (themeDark = !localStorage.getItem('theme-dark') ) => {
                 let link = document.getElementById('theme-css')
                 if(themeDark){
-                    localStorage.removeItem('theme-dark')
+                    localStorage.setItem('theme-dark', 1)
                     link.href=darkUrl
                 }else{
-                    localStorage.setItem('theme-dark', 1)
+                    localStorage.removeItem('theme-dark')
                     link.href=lightUrl
                 }
             }
