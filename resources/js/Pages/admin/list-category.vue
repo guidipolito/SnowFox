@@ -22,6 +22,7 @@
                     </template>
                 </Column>
             </TreeTable>
+
         </template>
         <h2 v-else> <center> Sem categorias cadastradas </center> </h2>
 
@@ -44,9 +45,11 @@
                 <small class="p-error" v-if="errors.description">{{ errors.description }}</small>
 
                 <label for="parent_id" class="block text-900 text-sm font-medium mb-2 mt-3">Parent Category</label>
-            
-                <small class="p-error" v-if="errors.description">{{ errors.description }}</small>
-                <Dropdown class="w-full" :options="categories" optionLabel="name" optionValue="id" v-model="form.parent_id" />
+
+                <TreeSelect class="w-full" 
+                    :options="typeof this.form.id == 'undefined' ? treeSelect : selectableParents" 
+                    placeholder="Select Parent Category" v-model="form.parent_id" />
+                <small class="p-error" v-if="errors.parent_id">{{ errors.parent_id }}</small>
 
                 <Button class="block mt-3" type="submit" label="Salvar" />
             </form>
@@ -57,7 +60,7 @@
 
 <script>
 import { useForm } from '@inertiajs/inertia-vue3';
-import AppLayout from '../../Layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
@@ -68,6 +71,7 @@ import Toolbar from 'primevue/toolbar';
 import TextArea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import { Inertia } from '@inertiajs/inertia';
+import TreeSelect from 'primevue/treeselect';
 
 export default {
     data(){
@@ -108,20 +112,48 @@ export default {
         const editCategory = data => {
             this.formVisible = true
             this.form = useForm(data.node.data)
-        }
-        const getTree = () => { 
-            const mapNodes = obj => {
-                let children = []
-                if(obj.children.length > 0){
-                    children = obj.children.filter(item=>typeof item != 'undefined').map(data=>mapNodes(data))
-                }
-                return { key: obj.path.replace('.', '-'), data: obj, children }
-            }
-            return this.categories.filter(item=>{console.log(item); return true}).map(obj=>mapNodes(obj));
+            this.selectableParents = treeSelectIgnore(data.node.data.id)
         }
 
-        let tree = getTree()
-        this.$watch('categories', ()=>this.tree = getTree() )
+
+        const getCategoriesTree = (arr = [...this.categories]) => { 
+            return arr.map( item=>{
+                let cat = {}
+                cat.data = item
+                cat.key = item.id
+                cat.children = item.children.length ? getCategoriesTree(item.children) : []
+                return cat
+            })
+        }
+
+        let tree = getCategoriesTree()
+
+        const getTreeSelect = ( arr = [...tree]) =>{
+            return arr.map(item=>{
+                item.key = item.data.id
+                item.label = item.data.name 
+                item.value = item.data.id
+                item.children = item.children.length ? getTreeSelect(item.children) : []
+                return item
+            })
+        }
+
+        let treeSelect = getTreeSelect()
+
+        const treeSelectIgnore = ( id=false, arr = [...this.treeSelect] ) => {
+            if(id===false) return arr;
+            arr = arr.map( item=>{
+                item.children = item.children.length ? treeSelectIgnore(id, item.children) : item.children
+                return item
+            })
+            return arr.filter(item => item.value != id)
+        }
+
+        this.$watch('categories', ()=>{ 
+            this.tree = getCategoriesTree() 
+            this.treeSelect = getTreeSelect()
+        })
+
 
         return { 
             submit, form, 
@@ -130,6 +162,8 @@ export default {
             editCategory,
             message: '',
             tree,
+            treeSelect,
+            selectableParents:[],
         }
     },
     props: {
@@ -138,7 +172,7 @@ export default {
     },
     layout: AppLayout,
     components: {
-        Dialog, InputText, Button, Message, Toolbar, TreeTable, Column, TextArea, Dropdown
+        Dialog, InputText, Button, Message, Toolbar, TreeTable, Column, TextArea, Dropdown, TreeSelect
     },
 }
 
